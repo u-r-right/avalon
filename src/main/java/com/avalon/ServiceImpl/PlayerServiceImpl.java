@@ -1,4 +1,4 @@
 package com.avalon.ServiceImpl;
 
-public class GameServiceImpl {
+public class PlayerServiceImpl {
 }
