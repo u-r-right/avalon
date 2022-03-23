@@ -15,6 +15,11 @@ public class RoomController {
         this.gameRoomService = gameRoomService;
     }
 
+    @GetMapping
+    public String forTest() {
+        return "works";
+    }
+
     @PostMapping
     public String getRoom(@RequestParam(name = "roomType") String roomType) {
         for (RoomType type : RoomType.values()) {
