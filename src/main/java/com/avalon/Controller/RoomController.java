@@ -1,9 +1,11 @@
 package com.avalon.Controller;
 import com.avalon.Resouce.RoomType;
 import com.avalon.Service.GameRoomService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "api/v1/room")
 public class RoomController {
@@ -24,10 +26,21 @@ public class RoomController {
     public String getRoom(@RequestParam(name = "roomType") String roomType) {
         for (RoomType type : RoomType.values()) {
             if (roomType.equalsIgnoreCase(type.toString())) {
-                return gameRoomService.getRoom(type);
+                String roomId = gameRoomService.getRoom(type);
+                if (roomId.length() == 4) {
+                    if (!gameRoomService.initRoomToGameService(roomId)) {
+                        log.info("release room : " + roomId + ", because the game service is not responding.");
+                        gameRoomService.releaseRoom(roomId, type);
+                        return "Game service is not responding.";
+                    }
+                }
+                log.info("no room was found");
+                return roomId;
             }
         }
-        throw new IllegalStateException("Root type : " + roomType + " is not valid");
+        String message = "Root type : " + roomType + " is not valid";
+        log.error(message);
+        throw new IllegalStateException(message);
     }
     @PatchMapping
     public void releaseRoom(
@@ -40,6 +53,8 @@ public class RoomController {
                 return;
             }
         }
-        throw new IllegalStateException("Root type : " + roomType + " is not valid");
+        String message = "Root type : " + roomType + " is not valid";
+        log.error(message);
+        throw new IllegalStateException(message);
     }
 }
