@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-avalon.log
+avalon.log*
